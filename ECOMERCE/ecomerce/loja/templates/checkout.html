@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}Finalizar pedido | Outlet Virtual{% endblock %}
+{% block body %}
+<section class="page-hero compact-hero">
+    <span class="eyebrow">QUASE LÁ</span><h1>Finalizar <span>pedido</span></h1>
+    <p>Revise seu carrinho e envie a lista de produtos pelo WhatsApp para confirmar o pedido.</p>
+</section>
+<section class="section checkout-section">
+    <div class="checkout-card">
+        <h2>Próximo passo</h2>
+        <p>O Outlet Virtual usa o WhatsApp para confirmar o pedido, combinar entrega e informar as formas de pagamento. Nenhuma cobrança é feita automaticamente neste site.</p>
+        <a class="btn btn-primary" href="{% url 'carrinho' %}">Revisar carrinho e enviar pedido →</a>
+    </div>
+</section>
+{% endblock %}

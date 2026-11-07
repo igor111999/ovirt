@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Outlet Virtual | Início{% endblock %}
+{% block body %}
+<section class="hero">
+    <div class="hero-content">
+        <span class="eyebrow">BEM-VINDO AO OUTLET VIRTUAL</span>
+        <h1>Suas escolhas,<br><span>em um só lugar.</span></h1>
+        <p>Explore nossos produtos e monte seu pedido com praticidade. Finalize sua compra conversando conosco pelo WhatsApp.</p>
+        <a class="btn btn-primary" href="{% url 'loja' %}">Explorar produtos <span aria-hidden="true">→</span></a>
+    </div>
+    <div class="hero-decoration" aria-hidden="true"><span>OV</span><i></i><b></b></div>
+</section>
+
+{% if banners %}
+<section class="banner-strip" aria-label="Destaques">
+    {% for banner in banners %}
+        {% if banner.imagem %}
+        <a class="promo-banner" href="{% url 'loja' %}{% if banner.link_destino %}{{ banner.link_destino }}{% endif %}">
+            <img src="{{ banner.imagem.url }}" alt="Destaque da loja">
+        </a>
+        {% endif %}
+    {% endfor %}
+</section>
+{% endif %}
+
+<section class="section">
+    <div class="section-heading">
+        <div><span class="eyebrow">SELEÇÃO DA LOJA</span><h2>Produtos em destaque</h2></div>
+        <a class="text-link" href="{% url 'loja' %}">Ver todos <span aria-hidden="true">→</span></a>
+    </div>
+    {% include 'produto_cards.html' %}
+</section>
+{% endblock %}

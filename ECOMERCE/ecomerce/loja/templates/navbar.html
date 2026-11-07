@@ -1,0 +1,15 @@
+{% load static %}
+<header class="site-header" style="background-color: #111111;">
+    <div class="header-inner">
+        <a class="brand" href="{% url 'homepage' %}" aria-label="Outlet Virtual - início">Outlet <span>Virtual</span></a>
+        <nav class="main-nav" aria-label="Navegação principal">
+            <a href="{% url 'homepage' %}">Início</a>
+            <a href="{% url 'loja' %}">Produtos</a>
+            <a href="{% url 'minhaconta' %}">Minha conta</a>
+        </nav>
+        <a class="cart-link" href="{% url 'carrinho' %}" aria-label="Abrir carrinho">
+            <span aria-hidden="true">🛒</span> Carrinho
+            <span class="cart-count">{{ quantidade_carrinho|default:0 }}</span>
+        </a>
+    </div>
+</header>

@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block title %}Meu carrinho | Outlet Virtual{% endblock %}
+{% block body %}
+<section class="page-hero compact-hero">
+    <span class="eyebrow">SEU PEDIDO</span>
+    <h1>Meu <span>carrinho</span></h1>
+    <p>Confira os itens e quantidades antes de enviar seu pedido.</p>
+</section>
+<section class="section cart-section">
+    {% if linhas_carrinho %}
+    <div class="cart-layout">
+        <div class="cart-items">
+            {% for linha in linhas_carrinho %}
+            <article class="cart-item" data-product="{{ linha.produto.nome|escape }}" data-variation="{% if linha.item.cor %}{{ linha.item.cor.nome|escape }}{% endif %}{% if linha.item.tamanho %} / {{ linha.item.tamanho|escape }}{% endif %}" data-quantity="{{ linha.quantidade }}" data-subtotal="{{ linha.subtotal|floatformat:2 }}">
+                <a class="cart-item-image" href="{% url 'ver_produto' linha.produto.id %}">
+                    {% if linha.produto.imagem %}<img src="{{ linha.produto.imagem.url }}" alt="{{ linha.produto.nome }}">{% else %}<span>Sem imagem</span>{% endif %}
+                </a>
+                <div class="cart-item-main">
+                    <span class="product-category">{% if linha.produto.categoria %}{{ linha.produto.categoria.nome }}{% else %}Produto{% endif %}</span>
+                    <h3><a href="{% url 'ver_produto' linha.produto.id %}">{{ linha.produto.nome }}</a></h3>
+                    <p class="cart-variation">{% if linha.item.cor %}Cor: {{ linha.item.cor.nome }}{% endif %}{% if linha.item.tamanho %} · Tamanho: {{ linha.item.tamanho }}{% endif %}</p>
+                    <strong class="price">R$ {{ linha.produto.preco|floatformat:2 }}</strong>
+                    <div class="cart-actions">
+                        <form class="quantity-form" method="post" action="{% url 'atualizar_carrinho' linha.item.id %}">
+                            {% csrf_token %}
+                            <label for="qty-{{ linha.item.id }}">Qtd.</label>
+                            <input id="qty-{{ linha.item.id }}" name="quantidade" type="number" min="0" max="{{ linha.item.quantidade }}" value="{{ linha.quantidade }}">
+                            <button class="small-button" type="submit">Atualizar</button>
+                        </form>
+                        <form method="post" action="{% url 'remover_do_carrinho' linha.item.id %}">
+                            {% csrf_token %}<button class="remove-link" type="submit">Remover</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="cart-item-total"><span>Subtotal</span><strong>R$ {{ linha.subtotal|floatformat:2 }}</strong></div>
+            </article>
+            {% endfor %}
+        </div>
+        <aside class="order-summary">
+            <span class="eyebrow">RESUMO</span>
+            <h2>Seu pedido</h2>
+            <div class="summary-line"><span>Itens</span><span>{{ quantidade_carrinho }}</span></div>
+            <div class="summary-line total-line"><span>Total</span><strong>R$ {{ total_carrinho|floatformat:2 }}</strong></div>
+            <p class="summary-note">O pedido será enviado para confirmação pelo WhatsApp. O envio não realiza pagamento automático.</p>
+            <button id="whatsapp-order" class="btn btn-whatsapp btn-wide" type="button" data-number="{{ whatsapp_number|default:'' }}">Enviar pedido pelo WhatsApp <span aria-hidden="true">↗</span></button>
+            <a class="continue-shopping" href="{% url 'loja' %}">← Continuar comprando</a>
+        </aside>
+    </div>
+    {% else %}
+    <div class="empty-state cart-empty">
+        <div class="empty-icon">🛒</div>
+        <h2>Seu carrinho está vazio</h2>
+        <p>Quando encontrar algo de que goste, adicione ao carrinho e ele aparecerá aqui.</p>
+        <a class="btn btn-primary" href="{% url 'loja' %}">Explorar produtos <span aria-hidden="true">→</span></a>
+    </div>
+    {% endif %}
+</section>
+<script>
+(function () {
+    const button = document.getElementById('whatsapp-order');
+    if (!button) return;
+    button.addEventListener('click', function () {
+        const number = (button.dataset.number || '').replace(/\D/g, '');
+        if (!number || number.length < 12) {
+            alert('Configure o número de WhatsApp da loja em ecomerce/settings.py, na variável WHATSAPP_NUMBER. Use o formato 55 + DDD + número, somente dígitos.');
+            return;
+        }
+        const rows = Array.from(document.querySelectorAll('.cart-item'));
+        const lines = rows.map(function (row) {
+            const variation = row.dataset.variation ? ' (' + row.dataset.variation.trim() + ')' : '';
+            return '• ' + row.dataset.product + variation + ' — quantidade: ' + row.dataset.quantity + ' — subtotal: R$ ' + row.dataset.subtotal.replace('.', ',');
+        });
+        const total = '{{ total_carrinho|floatformat:2 }}'.replace('.', ',');
+        const message = 'Olá! Gostaria de fazer este pedido pelo Outlet Virtual:\n\n' + lines.join('\n') + '\n\n*Total: R$ ' + total + '*\n\nPor favor, confirmem a disponibilidade e as opções de entrega/pagamento.';
+        window.open('https://wa.me/' + number + '?text=' + encodeURIComponent(message), '_blank', 'noopener');
+    });
+})();
+</script>
+{% endblock %}

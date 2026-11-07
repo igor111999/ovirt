@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Produtos | Outlet Virtual{% endblock %}
+{% block body %}
+<section class="page-hero compact-hero">
+    <span class="eyebrow">ESCOLHA O QUE VOCÊ PROCURA</span>
+    <h1>Nossa <span>loja</span></h1>
+    <p>Explore os produtos disponíveis e adicione seus favoritos ao carrinho.</p>
+</section>
+<section class="section shop-section">
+    <div class="section-heading">
+        <div><span class="eyebrow">CATÁLOGO</span><h2>{% if categoria_atual %}{{ categoria_atual }}{% else %}Todos os produtos{% endif %}</h2></div>
+        <span class="result-count">{{ produtos|length }} produto(s)</span>
+    </div>
+    {% if categorias %}
+    <div class="category-chips">
+        <a class="chip {% if not categoria_atual %}active{% endif %}" href="{% url 'loja' %}">Todos</a>
+        {% for categoria in categorias %}
+        <a class="chip {% if categoria_atual == categoria.nome %}active{% endif %}" href="{% url 'loja_categoria' categoria.nome %}">{{ categoria.nome }}</a>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% include 'produto_cards.html' %}
+</section>
+{% endblock %}

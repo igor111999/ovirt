@@ -1,0 +1,20 @@
+{% load static %}
+{% if produtos %}
+<div class="product-grid">
+    {% for produto in produtos %}
+    <article class="product-card">
+        <a class="product-image" href="{% url 'ver_produto' produto.id %}">
+            {% if produto.imagem %}<img src="{{ produto.imagem.url }}" alt="{{ produto.nome }}">{% else %}<div class="no-image">Imagem indisponível</div>{% endif %}
+            <span class="image-badge">Outlet Virtual</span>
+        </a>
+        <div class="product-info">
+            {% if produto.categoria %}<span class="product-category">{{ produto.categoria.nome }}</span>{% endif %}
+            <h3><a href="{% url 'ver_produto' produto.id %}">{{ produto.nome }}</a></h3>
+            <div class="product-bottom"><strong class="price">R$ {{ produto.preco|floatformat:2 }}</strong><a class="add-icon" href="{% url 'ver_produto' produto.id %}" aria-label="Ver {{ produto.nome }}">+</a></div>
+        </div>
+    </article>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state"><div class="empty-icon">⌕</div><h3>Nenhum produto encontrado</h3><p>Não há produtos disponíveis nesta seleção no momento.</p><a class="btn btn-secondary" href="{% url 'loja' %}">Ver todos os produtos</a></div>
+{% endif %}

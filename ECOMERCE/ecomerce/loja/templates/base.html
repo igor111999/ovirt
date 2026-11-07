@@ -1,0 +1,33 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#171923">
+    <title>{% block title %}Outlet Virtual{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+</head>
+<body style="background-color: #111111;">
+    {% include 'navbar.html' %}
+    <main class="page-content" style="background-color: #292b3a;">
+        {% if messages %}
+        <div class="messages" aria-live="polite">
+            {% for message in messages %}<div class="message {{ message.tags }}">{{ message }}</div>{% endfor %}
+        </div>
+        {% endif %}
+        {% block body %}{% endblock %}
+    </main>
+    <footer class="footer">
+        <div class="footer-inner">
+            <a class="footer-brand" href="{% url 'homepage' %}">Outlet <span>Virtual</span></a>
+            <p>Encontre seus produtos favoritos em um só lugar.</p>
+            <div class="footer-links"><a href="{% url 'loja' %}">Ver produtos</a><a href="{% url 'carrinho' %}">Meu carrinho</a></div>
+            <small>© {% now "Y" %} Outlet Virtual. Todos os direitos reservados.</small>
+        </div>
+    </footer>
+</body>
+</html>

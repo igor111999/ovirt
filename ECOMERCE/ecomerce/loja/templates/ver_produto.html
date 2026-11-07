@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ produto.nome }} | Outlet Virtual{% endblock %}
+{% block body %}
+<section class="section product-detail-section">
+    <a class="back-link" href="{% url 'loja' %}">← Voltar aos produtos</a>
+    <div class="product-detail">
+        <div class="detail-image">
+            {% if produto.imagem %}<img src="{{ produto.imagem.url }}" alt="{{ produto.nome }}">{% else %}<div class="no-image">Imagem indisponível</div>{% endif %}
+        </div>
+        <div class="detail-info">
+            {% if produto.categoria %}<span class="eyebrow">{{ produto.categoria.nome }}</span>{% else %}<span class="eyebrow">OUTLET VIRTUAL</span>{% endif %}
+            <h1>{{ produto.nome }}</h1>
+            <p class="detail-price">R$ {{ produto.preco|floatformat:2 }}</p>
+            <p class="detail-description">Selecione a opção disponível e informe a quantidade desejada. Seu pedido ficará no carrinho para você revisar antes de enviar pelo WhatsApp.</p>
+            {% if tem_estoque %}
+            <form class="add-cart-form" method="post" action="{% url 'adicionar_carrinho' %}">
+                {% csrf_token %}
+                <label for="item_estoque">Variação / tamanho</label>
+                <select id="item_estoque" name="item_estoque" required>
+                    {% for item in itens_estoque %}
+                    <option value="{{ item.id }}">
+                        {% if item.cor %}{{ item.cor.nome }}{% else %}Opção{% endif %}{% if item.tamanho %} — {{ item.tamanho }}{% endif %} ({{ item.quantidade }} disponível)
+                    </option>
+                    {% endfor %}
+                </select>
+                <label for="quantidade">Quantidade</label>
+                <input id="quantidade" name="quantidade" type="number" value="1" min="1" required>
+                <button class="btn btn-primary btn-wide" type="submit">Adicionar ao carrinho <span aria-hidden="true">→</span></button>
+            </form>
+            {% else %}
+            <div class="stock-warning"><strong>Produto indisponível</strong><p>Este produto está sem estoque no momento.</p></div>
+            {% endif %}
+            <div class="detail-perks"><span>✓ Pedido revisado antes do envio</span><span>✓ Atendimento pelo WhatsApp</span></div>
+        </div>
+    </div>
+</section>
+{% endblock %}
